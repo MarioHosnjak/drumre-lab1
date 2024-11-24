@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"   >
+<head>
+    <meta charset="UTF-8">
+    <title>MyProfile</title>
+</head>
+<body>
+    <h2>My Profile</h2>
+    <div id="profileInfo"></div>
+    <div sec:authorize="isAuthenticated()">
+        <p><a th:href="@{/logout}">Log Out</a></p>
+    </div>
+</body>
+<script th:inline="javascript">
+    let name = /*[[${profileInfo.get('name')}]]*/ 'default'
+    let email = /*[[${profileInfo.get('email')}]]*/ 'default'
+    let profileDiv = document.getElementById("profileInfo")
+    let nameH4 = document.createElement("h4")
+    nameH4.innerText = name
+    profileDiv.appendChild(nameH4)
+    let emailH4 = document.createElement("h4")
+    emailH4.innerText = email
+    profileDiv.appendChild(emailH4)
+</script>
+</html>
