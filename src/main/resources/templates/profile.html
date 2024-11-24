@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>MyProfile</title>
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
-    <h2>My Profile</h2>
+    <header>
+        <h1>My Profile</h1> <!-- This will display the current page title -->
+        <div class="nav-buttons">
+            <a href="/users/profile">Profile</a>
+            <a href="/movies">Movies</a>
+            <a href="#">Stock Market</a> <!-- Placeholder for future functionality -->
+        </div>
+    </header>
     <div id="profileInfo"></div>
     <div sec:authorize="isAuthenticated()">
         <p><a th:href="@{/logout}">Log Out</a></p>
