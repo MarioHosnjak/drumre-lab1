@@ -30,9 +30,11 @@
         <strong><span th:if="${percentageChange > 0}" class="positive">+</span><span th:text="${percentageChange}" th:classappend="${percentageChange > 0} ? 'positive' : 'negative'"></span><span th:classappend="${percentageChange > 0} ? 'positive' : 'negative'">%</span></strong>
         since market open.</p>
 </div>
-
-<canvas id="stockChart"></canvas>
-
+<div style="display: flex; justify-content: center;">
+    <div style="width: 75%;">
+        <canvas id="stockChart"></canvas>
+    </div>
+</div>
 <script th:inline="javascript">
     let stockData = /*[[${stockData}]]*/ '{}';
     let chartData = processData(stockData);

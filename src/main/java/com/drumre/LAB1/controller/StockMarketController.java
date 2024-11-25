@@ -24,7 +24,8 @@ public class StockMarketController {
         String interval = "5min"; // Set to 5min for current day intraday data
 
         // Get the stock data as JSON
-        String stockData = stockMarketService.getIntradayData(symbol, interval, "D1Q7F39T63SD58ZO");
+        //String stockData = stockMarketService.getIntradayData(symbol, interval, "D1Q7F39T63SD58ZO");
+        String stockData = stockMarketService.getIntradayData(symbol, interval, "6H5AE3I44954WNEK");
 
         // Calculate the daily percentage change and add to the model
         double percentageChange = stockMarketService.calculateDailyPercentageChange(stockData);
