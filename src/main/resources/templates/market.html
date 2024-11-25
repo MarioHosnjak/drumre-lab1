@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Market</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        .positive {
+            color: green;
+        }
+
+        .negative {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Stock Market</h1>
+    <div class="nav-buttons">
+        <a href="/users/profile">Profile</a>
+        <a href="/movies">Movies</a>
+        <a href="/market">Stock Market</a>
+    </div>
+</header>
+<div>
+    <h2>Today's Change:</h2>
+    <p>The stock price has changed by
+        <strong><span th:if="${percentageChange > 0}" class="positive">+</span><span th:text="${percentageChange}" th:classappend="${percentageChange > 0} ? 'positive' : 'negative'"></span><span th:classappend="${percentageChange > 0} ? 'positive' : 'negative'">%</span></strong>
+        since market open.</p>
+</div>
+
+<canvas id="stockChart"></canvas>
+
+<script th:inline="javascript">
+    let stockData = /*[[${stockData}]]*/ '{}';
+    let chartData = processData(stockData);
+
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'S&P 500',
+                data: chartData.data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'category',
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Price'
+                    }
+                }
+            }
+        }
+    });
+
+    function processData(stockData) {
+        const parsedData = JSON.parse(stockData)["Time Series (5min)"];
+        let labels = [];
+        let data = [];
+
+        for (const timestamp in parsedData) {
+            labels.push(timestamp);
+            data.push(parsedData[timestamp]["4. close"]); // Close price
+        }
+
+        return { labels: labels, data: data };
+    }
+</script>
+</body>
+
+</html>
