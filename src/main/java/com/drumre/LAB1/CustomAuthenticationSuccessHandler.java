@@ -18,21 +18,18 @@ import java.util.Optional;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
-    private UserRepository userRepository; // Your repository to interact with the database
+    private UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
 
-        // Retrieve the email from the OAuth2 provider (e.g., Facebook)
         String email = oauth2User.getAttribute("email");
 
-        // Check if the user exists in the database
         Optional<User> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isEmpty()) {
-            // If the user doesn't exist, save the new user
             System.out.println("User doesn't exist!");
             User newUser = new User();
             newUser.setEmail(email);
@@ -44,7 +41,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             System.out.println("User already exists!");
         }
 
-        // Redirect the user to their profile page or wherever you want after login
         response.sendRedirect("/users/profile");
     }
 }

@@ -42,7 +42,7 @@ public class MovieController {
                                           @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (sortDirection == null || sortDirection.isEmpty()) {
-            sortDirection = "asc";  // Default sort direction is ascending
+            sortDirection = "asc";  // Default sort direction
         }
 
         return movieService.getMoviesByFilters(filters, sortBy, sortDirection, page, size);

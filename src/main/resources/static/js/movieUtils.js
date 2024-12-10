@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8080/api/movies/filter'; // Replace with your API endpoint
+const apiUrl = 'http://localhost:8080/api/movies/filter';
 
 let currentPage = 0;
 let pageSize = 25;
@@ -66,12 +66,10 @@ function changeSorting(columnClicked){
     sortBy = columnClicked;
     sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
 
-    // Clear all arrows
     document.querySelectorAll('th span').forEach(span => {
         span.textContent = '';
     });
 
-    // Update arrow for the sorted column
     const arrowSpan = document.getElementById(`${columnClicked}-sort-arrow`);
     if (arrowSpan) {
         arrowSpan.textContent = sortDirection === 'asc' ? '▼' : '▲';
@@ -80,11 +78,10 @@ function changeSorting(columnClicked){
     fetchMovies(currentPage, pageSize);
 }
 
-// Handle search input changes
 function searchMoviesByTitle() {
     const searchBar = document.getElementById('search-bar-title');
     searchTitle = searchBar.value.trim();
-    fetchMovies(0, pageSize); // Reset to the first page when searching
+    fetchMovies(0, pageSize);
 }
 
 function searchMoviesByGenre() {
@@ -97,16 +94,15 @@ function searchMoviesByGenre() {
 function searchMoviesByYear() {
     const searchBar = document.getElementById('search-bar-year');
     searchYear = searchBar.value.trim();
-    fetchMovies(0, pageSize); // Reset to the first page when searching
+    fetchMovies(0, pageSize);
 }
 
 function updatePageSize(size) {
-    pageSize = parseInt(size, 10); // Convert the value to an integer
-    currentPage = 0; // Reset to the first page when the page size changes
-    fetchMovies(currentPage, pageSize); // Fetch movies with the updated page size
+    pageSize = parseInt(size, 10);
+    currentPage = 0;
+    fetchMovies(currentPage, pageSize);
 }
 
-// Delete movie function
 async function deleteMovie(movieId) {
     if (confirm('Are you sure you want to delete this movie?')) {
         try {
@@ -125,5 +121,4 @@ async function deleteMovie(movieId) {
     }
 }
 
-// Initialize the table
 fetchMovies(currentPage, pageSize);

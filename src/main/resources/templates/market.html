@@ -27,7 +27,11 @@
 <div>
     <h2>Today's Change:</h2>
     <p>The stock price has changed by
-        <strong><span th:if="${percentageChange > 0}" class="positive">+</span><span th:text="${percentageChange}" th:classappend="${percentageChange > 0} ? 'positive' : 'negative'"></span><span th:classappend="${percentageChange > 0} ? 'positive' : 'negative'">%</span></strong>
+        <strong>
+            <span th:if="${percentageChange > 0}" class="positive">+</span>
+            <span th:text="${percentageChange}" th:classappend="${percentageChange > 0} ? 'positive' : 'negative'"></span>
+            <span th:classappend="${percentageChange > 0} ? 'positive' : 'negative'">%</span>
+        </strong>
         since market open.</p>
 </div>
 <div style="display: flex; justify-content: center;">
@@ -76,10 +80,13 @@
         let labels = [];
         let data = [];
 
-        for (const timestamp in parsedData) {
+        // Reverse order of timestamps
+        const timestamps = Object.keys(parsedData).reverse();
+
+        timestamps.forEach(timestamp => {
             labels.push(timestamp);
             data.push(parsedData[timestamp]["4. close"]); // Close price
-        }
+        });
 
         return { labels: labels, data: data };
     }

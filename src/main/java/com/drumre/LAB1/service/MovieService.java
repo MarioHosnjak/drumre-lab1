@@ -27,18 +27,14 @@ public class MovieService {
         String url = String.format("http://www.omdbapi.com/?i=%s&apikey=73bf0fcd", imdbID);
         System.out.println("Fetching movie from URL: " + url);
 
-        // Fetch the movie data as a Map or String first for debugging
         String jsonResponse = restTemplate.getForObject(url, String.class);
         System.out.println("Received response: " + jsonResponse);
 
-        // Now, attempt to map the response to a Movie object
         Movie movie = restTemplate.getForObject(url, Movie.class);
 
         if (movie != null) {
-            // Save the movie to MongoDB
             return movieRepository.save(movie);
         } else {
-            // Handle the case where the movie is not found or the response is invalid
             throw new RuntimeException("Movie not found in OMDB API.");
         }
     }
@@ -55,10 +51,8 @@ public class MovieService {
                                           String sortBy, String sortDirection,
                                           int page, int size) {
 
-        // Create a new query object
         Query query = new Query();
 
-        // Loop through the filters map and apply each filter dynamically
         filters.forEach((key, value) -> {
             if (value != null && !value.isEmpty()) {
                 switch (key.toLowerCase()) {
@@ -78,7 +72,6 @@ public class MovieService {
                         query.addCriteria(Criteria.where("language").regex(value, "i"));
                         break;
                     case "boxoffice":
-                        // Handle boxOffice filter: expect a numeric value
                         try {
                             double boxOfficeThreshold = Double.parseDouble(value.replaceAll("[^\\d.]", ""));
                             query.addCriteria(Criteria.where("boxOffice").gt(boxOfficeThreshold));
@@ -97,13 +90,10 @@ public class MovieService {
             query.with(Sort.by(direction, sortBy));
         }
 
-        // Get total count for pagination metadata
         long total = mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Movie.class);
 
-        // Pagination logic: apply skip and limit
         query.skip((long) page * size).limit(size);
 
-        // Fetch paginated results
         List<Movie> movies = mongoTemplate.find(query, Movie.class);
 
         return new PageImpl<>(movies, PageRequest.of(page, size), total);

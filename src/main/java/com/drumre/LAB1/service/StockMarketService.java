@@ -40,63 +40,48 @@ public class StockMarketService {
         if (isRateLimitExceeded(stockData)) {
             return 0;
         }
-        String openPriceStr = getOpenPrice(stockData);
-        String latestPriceStr = getLatestPrice(stockData);
 
-        if (openPriceStr != null && latestPriceStr != null) {
-            double openPrice = Double.parseDouble(openPriceStr);
-            double latestPrice = Double.parseDouble(latestPriceStr);
-
-            // Calculate the percentage change
-            double change = ((latestPrice - openPrice) / openPrice) * 100;
-            return Math.round(change * 100.0) / 100.0;
-        }
-        return 0;
-    }
-
-    // Method to get the opening price (first data point for the day)
-    private String getOpenPrice(String stockData) throws Exception {
-        JsonNode json = objectMapper.readTree(stockData);
-        JsonNode timeSeries = json.get("Time Series (5min)");
-        if (timeSeries == null) {
-            throw new Exception("No time series data available.");
-        }
-        String firstTimestamp = timeSeries.fieldNames().next();
-        return timeSeries.get(firstTimestamp).get("1. open").asText();
-    }
-
-    private String getLatestPrice(String stockData) throws Exception {
         JsonNode json = objectMapper.readTree(stockData);
         JsonNode timeSeries = json.get("Time Series (5min)");
 
-        System.out.println("Time series: " + timeSeries);
         if (timeSeries == null) {
             throw new Exception("No time series data available.");
         }
 
-        // Get the latest timestamp (most recent data)
-        String latestTimestamp = getLatestTimestamp(timeSeries);
-        return timeSeries.get(latestTimestamp).get("4. close").asText();
-    }
-
-    // Helper method to get the latest timestamp
-    private String getLatestTimestamp(JsonNode timeSeries) {
-        // Iterate through the keys (timestamps) and return the last one
         Iterator<String> fieldNames = timeSeries.fieldNames();
-        String latestTimestamp = null;
+        String oldestTimestamp = null;
+        String newestTimestamp = null;
+
         while (fieldNames.hasNext()) {
-            latestTimestamp = fieldNames.next(); // Last one in the iteration is the latest timestamp
+            if (oldestTimestamp == null) {
+                oldestTimestamp = fieldNames.next();
+            }
+            newestTimestamp = fieldNames.next();
         }
-        return latestTimestamp;
+
+        if (oldestTimestamp == null || newestTimestamp == null) {
+            throw new Exception("Unable to determine timestamps.");
+        }
+
+        // API daje podatke od najnovijeg prema najstarijem
+        String tmp = oldestTimestamp;
+        oldestTimestamp = newestTimestamp;
+        newestTimestamp = tmp;
+
+        double oldestPrice = Double.parseDouble(timeSeries.get(oldestTimestamp).get("1. open").asText());
+        double newestPrice = Double.parseDouble(timeSeries.get(newestTimestamp).get("4. close").asText());
+
+        double change = ((newestPrice - oldestPrice) / oldestPrice) * 100;
+        return Math.round(change * 100.0) / 100.0;
     }
 
     private boolean isRateLimitExceeded(String stockData) {
         try {
             JsonNode json = objectMapper.readTree(stockData);
-            return json.has("Information"); // Check if the "Information" field exists
+            return json.has("Information");
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // If there is an issue parsing, assume no rate limit error
+            return false;
         }
     }
 }

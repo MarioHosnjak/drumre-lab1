@@ -25,16 +25,13 @@ public class MovieSeederService {
     private static final String OMDB_API_KEY = "73bf0fcd";
 
     public Boolean seedMovies() throws IOException {
-        // Load the movie IDs from the file
         Resource resource = new ClassPathResource("static/ids.txt");
         String content = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()));
 
-        // Split the content by new lines to get movie IDs
         List<String> movieIds = content.lines()
                 .map(String::trim)
                 .collect(Collectors.toList());
 
-        // Loop through each movie ID and fetch & save movie data
         for (String imdbID : movieIds) {
             try {
                 System.out.println(imdbID);
@@ -53,7 +50,6 @@ public class MovieSeederService {
 
         if (movie != null) {
             if (!movieRepository.existsByImdbID(imdbID)) {
-                // Save the movie to the database if it doesn't already exist
                 movieRepository.save(movie);
                 System.out.println("Movie saved: " + movie.getTitle());
             } else {

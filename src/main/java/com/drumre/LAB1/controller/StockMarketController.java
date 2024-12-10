@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StockMarketController {
 
-    /*@Value("${stock.api.key}") // Store your API key securely
+    /*@Value("${stock.api.key}")
     private String apiKey;*/
 
     private final StockMarketService stockMarketService;
@@ -21,18 +21,16 @@ public class StockMarketController {
     @GetMapping("/market")
     public String getStockMarketData(Model model) throws Exception {
         String symbol = "SPY"; // S&P 500
-        String interval = "5min"; // Set to 5min for current day intraday data
+        String interval = "5min";
 
-        // Get the stock data as JSON
         //String stockData = stockMarketService.getIntradayData(symbol, interval, "D1Q7F39T63SD58ZO");
         String stockData = stockMarketService.getIntradayData(symbol, interval, "6H5AE3I44954WNEK");
 
-        // Calculate the daily percentage change and add to the model
         double percentageChange = stockMarketService.calculateDailyPercentageChange(stockData);
         model.addAttribute("stockData", stockData);
         model.addAttribute("percentageChange", percentageChange);
 
-        return "market"; // Return the Thymeleaf template name
+        return "market";
     }
 
 }
