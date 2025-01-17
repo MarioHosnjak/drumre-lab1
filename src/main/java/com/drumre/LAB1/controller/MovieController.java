@@ -3,8 +3,10 @@ package com.drumre.LAB1.controller;
 import com.drumre.LAB1.model.Movie;
 import com.drumre.LAB1.service.MovieSeederService;
 import com.drumre.LAB1.service.MovieService;
+import com.drumre.LAB1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class MovieController {
     private MovieService movieService;
     @Autowired
     private MovieSeederService movieSeederService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/all")
     public Page<Movie> getAllMovies(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
@@ -57,6 +61,22 @@ public class MovieController {
         } else {
             return "Failed to delete movie with ID " + movieId + ". It may not exist.";
         }
+    }
+
+    @PostMapping("/like")
+    public void likeMovie(@RequestParam String userId, @RequestParam String movieId) {
+        userService.likeMovie(userId, movieId);
+    }
+
+    @PostMapping("/unlike")
+    public void unlikeMovie(@RequestParam String userId, @RequestParam String movieId) {
+        userService.unlikeMovie(userId, movieId);
+    }
+
+    @GetMapping("/liked-movies")
+    public ResponseEntity<List<Movie>> getLikedMovies(@RequestParam String userId) {
+        List<Movie> likedMovies = movieService.getLikedMoviesByUser(userId);
+        return ResponseEntity.ok(likedMovies);
     }
 }
 

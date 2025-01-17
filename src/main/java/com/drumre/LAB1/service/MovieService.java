@@ -1,7 +1,10 @@
 package com.drumre.LAB1.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.drumre.LAB1.model.Movie;
+import com.drumre.LAB1.model.User;
 import com.drumre.LAB1.repository.MovieRepository;
+import com.drumre.LAB1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,14 +13,19 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -105,5 +113,29 @@ public class MovieService {
             return true;
         }
         return false;
+    }
+
+    public List<Movie> getLikedMoviesByUser(String userId) {
+        // Fetch the full User document
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            List<String> likedMovieIds = user.getLikedMovies();
+            System.out.println("Liked Movie IDs: " + likedMovieIds);
+
+            // If the user has liked no movies, return an empty list
+            if (likedMovieIds == null || likedMovieIds.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            // Use custom query to fetch movies by IDs
+            Query query = new Query(Criteria.where("id").in(likedMovieIds));
+            List<Movie> likedMovies = mongoTemplate.find(query, Movie.class);
+
+            return likedMovies;
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

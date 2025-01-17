@@ -37,4 +37,32 @@ public class UserService {
         user.getFollowing().remove(unfollowUserId);
         userRepository.save(user);
     }
+
+    public void likeMovie(String userId, String movieId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (!user.getLikedMovies().contains(movieId)) {
+                user.getLikedMovies().add(movieId);
+                userRepository.save(user);
+            }
+        } else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
+
+    public void unlikeMovie(String userId, String movieId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getLikedMovies().contains(movieId)) {
+                user.getLikedMovies().remove(movieId);
+                userRepository.save(user);
+            }
+        } else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
 }

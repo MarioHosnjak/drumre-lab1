@@ -30,10 +30,10 @@
       <button th:if="${user.id} == ${currentUserId}" disabled>You</button>
       <button th:if="${user.id} != ${currentUserId} and ${followedUserIds.contains(user.id)}"
               th:attr="data-user-id=${user.id},data-current-user-id=${currentUserId}"
-              class="unfollow-button">Unfollow</button>
+              class="unfollow-button" style="background-color: #dc3545; border-radius: 5px">Unfollow</button>
       <button th:if="${user.id} != ${currentUserId} and !${followedUserIds.contains(user.id)}"
               th:attr="data-user-id=${user.id},data-current-user-id=${currentUserId}"
-              class="follow-button">Follow</button>
+              class="follow-button" style="background-color: greenyellow; border-radius: 5px">Follow</button>
     </li>
   </ul>
 </div>

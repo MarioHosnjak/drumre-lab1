@@ -10,24 +10,28 @@ let searchTitle = '';
 let searchGenre = '';
 let searchYear = '';
 
+
 async function fetchMovies(page = 0, size = 5) {
     try {
         const response = await fetch(
             `${apiUrl}?page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}&title=${searchTitle}&genre=${searchGenre}&year=${searchYear}`);
         const data = await response.json();
         console.log(data)
-        populateTable(data.content);
+        await populateTable(data.content);
         setupPagination(data.totalPages);
     } catch (error) {
         console.error('Error fetching movies:', error);
     }
 }
 
-function populateTable(movies) {
+async function populateTable(movies) {
+    const likedMovies = await fetchLikedMovies(currentUserId); // Fetch liked movies for the user
+
     const tableBody = document.getElementById('movie-table-body');
-    tableBody.innerHTML = ''; // Clear previous rows
+    tableBody.innerHTML = '';
     let i = 1;
     movies.forEach(movie => {
+        const isLiked = likedMovies.some(likedMovie => likedMovie.id === movie.id);
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${currentPage * pageSize + i}.</td>
@@ -36,13 +40,50 @@ function populateTable(movies) {
             <td>${movie.Year}</td>
             <td>${movie.BoxOffice ? `$${movie.BoxOffice.toLocaleString()}` : 'N/A'}</td>
             <td>
-                <button class="star-button" onclick="this.textContent = this.textContent === '★' ? '☆' : '★';">☆</button>
-                <button class="delete" onclick="deleteMovie('${movie.id}')">Delete</button>
+                <button class="star-button" style="font-size: 1em"
+                        data-movie-id="${movie.id}"
+                        onclick="toggleLike(this, '${movie.id}')">
+                    ${isLiked ? '★' : '☆'}
+                </button>
+                <button style="font-size: 1em" class="delete" onclick="deleteMovie('${movie.id}')">Delete</button>
             </td>
         `;
         tableBody.appendChild(row);
-        i = i + 1;
+        i++;
     });
+}
+
+async function fetchLikedMovies(userId) {
+    try {
+        const response = await fetch(`/api/movies/liked-movies?userId=${userId}`);
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to fetch liked movies:', response.statusText);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching liked movies:', error);
+        return [];
+    }
+}
+
+async function toggleLike(button, movieId) {
+    const isLiked = button.textContent === '★';
+    const url = isLiked
+        ? `/api/movies/unlike?userId=${encodeURIComponent(currentUserId)}&movieId=${encodeURIComponent(movieId)}`
+        : `/api/movies/like?userId=${encodeURIComponent(currentUserId)}&movieId=${encodeURIComponent(movieId)}`;
+
+    try {
+        const response = await fetch(url, { method: 'POST' });
+        if (response.ok) {
+            button.textContent = isLiked ? '☆' : '★'; // Toggle the star
+        } else {
+            console.error('Failed to toggle like');
+        }
+    } catch (error) {
+        console.error('Error toggling like:', error);
+    }
 }
 
 function setupPagination(totalPages) {

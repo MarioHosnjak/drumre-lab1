@@ -16,15 +16,17 @@ public class User {
     @Indexed(unique = true)
     private String email;
     private List<String> following;
+    private List<String> likedMovies;
 
     // Constructors, Getters, and Setters
     public User() {}
 
-    public User(String facebookId, String name, String email, List<String> following) {
+    public User(String facebookId, String name, String email, List<String> following, List<String> likedMovies) {
         this.facebookId = facebookId;
         this.name = name;
         this.email = email;
         this.following = following;
+        this.likedMovies = likedMovies;
     }
 
     public String getId() { return id; }
@@ -50,4 +52,11 @@ public class User {
 
     public List<String> getFollowing() { return following; }
     public void setFollowing(List<String> following) { this.following = following; }
+
+    public List<String> getLikedMovies() {
+        return likedMovies;
+    }
+    public void setLikedMovies(List<String> likedMovies) {
+        this.likedMovies = likedMovies;
+    }
 }

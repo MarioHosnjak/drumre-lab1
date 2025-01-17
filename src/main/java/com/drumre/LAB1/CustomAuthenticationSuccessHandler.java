@@ -40,6 +40,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             // Initialize the following list
             newUser.setFollowing(new ArrayList<>());
 
+            newUser.setLikedMovies(new ArrayList<>());
+
             userRepository.save(newUser);
         } else {
             System.out.println("User already exists!");
