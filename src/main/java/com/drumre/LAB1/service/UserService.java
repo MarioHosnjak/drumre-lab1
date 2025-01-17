@@ -25,4 +25,16 @@ public class UserService {
     public Optional<User> findUserByEmail(String email){
         return userRepository.findByEmail(email);
     }
+
+    public void followUser(String userId, String followUserId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.getFollowing().add(followUserId);
+        userRepository.save(user);
+    }
+
+    public void unfollowUser(String userId, String unfollowUserId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.getFollowing().remove(unfollowUserId);
+        userRepository.save(user);
+    }
 }

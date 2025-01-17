@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Component
@@ -35,6 +36,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             newUser.setEmail(email);
             newUser.setName(oauth2User.getAttribute("name"));
             newUser.setFacebookId(oauth2User.getAttribute("id"));
+
+            // Initialize the following list
+            newUser.setFollowing(new ArrayList<>());
 
             userRepository.save(newUser);
         } else {

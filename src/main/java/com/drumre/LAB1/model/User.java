@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "users")
 public class User {
     @Id
@@ -13,14 +15,16 @@ public class User {
     private String name;
     @Indexed(unique = true)
     private String email;
+    private List<String> following;
 
     // Constructors, Getters, and Setters
     public User() {}
 
-    public User(String facebookId, String name, String email) {
+    public User(String facebookId, String name, String email, List<String> following) {
         this.facebookId = facebookId;
         this.name = name;
         this.email = email;
+        this.following = following;
     }
 
     public String getId() { return id; }
@@ -43,4 +47,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<String> getFollowing() { return following; }
+    public void setFollowing(List<String> following) { this.following = following; }
 }

@@ -4,10 +4,7 @@ import com.drumre.LAB1.model.User;
 import com.drumre.LAB1.repository.UserRepository;
 import com.drumre.LAB1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +28,15 @@ public class UserCrudController {
     @GetMapping("/by-email")
     public Optional<User> getUserByEmail(@RequestParam String email) {
         return userService.findUserByEmail(email);
+    }
+
+    @PostMapping("/follow")
+    public void followUser(@RequestParam String userId, @RequestParam String followUserId) {
+        userService.followUser(userId, followUserId);
+    }
+
+    @PostMapping("/unfollow")
+    public void unfollowUser(@RequestParam String userId, @RequestParam String unfollowUserId) {
+        userService.unfollowUser(userId, unfollowUserId);
     }
 }

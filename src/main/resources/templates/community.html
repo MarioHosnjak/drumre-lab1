@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"   >
+<head>
+  <meta charset="UTF-8">
+  <title>Community</title>
+  <link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+<header>
+  <h1>Community</h1>
+  <div class="nav-buttons">
+    <a href="/users/profile">Profile</a>
+    <a href="/movies">Movies</a>
+    <a href="/market">Stock Market</a>
+    <a href="/users/community">Community</a>
+  </div>
+</header>
+<div class="profileInfoContainer" style="border: 1px solid black; border-radius: 5px; background-color: cornflowerblue; padding: 30px; width: min-content">
+  <div id="profileInfo"></div>
+  <div sec:authorize="isAuthenticated()">
+    <p><a th:href="@{/logout}">Log Out</a></p>
+  </div>
+</div>
+
+<div>
+  <h2>All Users</h2>
+  <ul>
+    <li th:each="user : ${allUsers}" style="margin: 10px">
+      <span th:text="${user.name}"></span>
+      <button th:if="${user.id} == ${currentUserId}" disabled>You</button>
+      <button th:if="${user.id} != ${currentUserId} and ${followedUserIds.contains(user.id)}"
+              th:attr="data-user-id=${user.id},data-current-user-id=${currentUserId}"
+              class="unfollow-button">Unfollow</button>
+      <button th:if="${user.id} != ${currentUserId} and !${followedUserIds.contains(user.id)}"
+              th:attr="data-user-id=${user.id},data-current-user-id=${currentUserId}"
+              class="follow-button">Follow</button>
+    </li>
+  </ul>
+</div>
+</body>
+<script th:inline="javascript">
+  let name = /*[[${profileInfo.get('name')}]]*/ 'default'
+  let email = /*[[${profileInfo.get('email')}]]*/ 'default'
+  let profileDiv = document.getElementById("profileInfo")
+  let nameH4 = document.createElement("h4")
+  nameH4.innerText = name
+  profileDiv.appendChild(nameH4)
+  let emailH4 = document.createElement("h4")
+  emailH4.innerText = email
+  profileDiv.appendChild(emailH4)
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const followButtons = document.querySelectorAll('.follow-button');
+    const unfollowButtons = document.querySelectorAll('.unfollow-button');
+
+    followButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const userId = this.getAttribute('data-user-id');
+        const currentUserId = this.getAttribute('data-current-user-id');
+        followUser(currentUserId, userId);
+      });
+    });
+
+    unfollowButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const userId = this.getAttribute('data-user-id');
+        const currentUserId = this.getAttribute('data-current-user-id');
+        unfollowUser(currentUserId, userId);
+      });
+    });
+  });
+
+  function followUser(currentUserId, followUserId) {
+    const url = `/api/user/follow?userId=${encodeURIComponent(currentUserId)}&followUserId=${encodeURIComponent(followUserId)}`;
+    fetch(url, { method: 'POST' })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                console.error('Failed to follow user');
+              }
+            });
+  }
+
+  function unfollowUser(currentUserId, unfollowUserId) {
+    const url = `/api/user/unfollow?userId=${encodeURIComponent(currentUserId)}&unfollowUserId=${encodeURIComponent(unfollowUserId)}`;
+    fetch(url, { method: 'POST' })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                console.error('Failed to unfollow user');
+              }
+            });
+  }
+</script>
+</html>
