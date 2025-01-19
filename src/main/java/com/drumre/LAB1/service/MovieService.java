@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -136,6 +137,23 @@ public class MovieService {
             return likedMovies;
         } else {
             return Collections.emptyList();
+        }
+    }
+
+
+    public List<Movie> getTop30Movies(double stockMarketChange) {
+        return movieRepository.findAll().stream()
+                .filter(movie -> getImdbVotes(movie) >= 500000) // Filter movies with less than 500,000 IMDb votes
+                .sorted((m1, m2) -> Double.compare(m2.calculateOverallRating(m2, stockMarketChange), m1.calculateOverallRating(m1, stockMarketChange)))
+                .limit(30)
+                .collect(Collectors.toList());
+    }
+
+    private long getImdbVotes(Movie movie) {
+        try {
+            return Long.parseLong(movie.getImdbVotes().replace(",", "")); // Remove commas and parse as long
+        } catch (NumberFormatException e) {
+            return 0; // Return 0 if the number is invalid or missing
         }
     }
 }

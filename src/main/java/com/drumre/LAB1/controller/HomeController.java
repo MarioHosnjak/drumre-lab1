@@ -1,6 +1,8 @@
 package com.drumre.LAB1.controller;
 
+import com.drumre.LAB1.model.Movie;
 import com.drumre.LAB1.model.User;
+import com.drumre.LAB1.service.MovieService;
 import com.drumre.LAB1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,14 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 @Controller
 public class HomeController {
 
     private final UserService userService;
+    private final MovieService movieService;
     @Autowired
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, MovieService movieService) {
         this.userService = userService;
+        this.movieService = movieService;
     }
 
     @GetMapping("/")
@@ -36,5 +41,18 @@ public class HomeController {
             currentUser.ifPresent(user -> model.addAttribute("currentUserId", user.getId()));
         }
         return "movies";
+    }
+    @GetMapping("/movie-feed-dummy")
+    public String getDummyStockMarketData(Model model) throws Exception {
+
+        Random random = new Random();
+        double percentageChange = -1 + (2 * random.nextDouble());
+        percentageChange = Math.round(percentageChange * 100.0) / 100.0;
+
+        List<Movie> top30Popular = movieService.getTop30Movies(percentageChange);
+        model.addAttribute("percentageChange", percentageChange);
+        model.addAttribute("top30Popular", top30Popular);
+
+        return "MovieFeed";
     }
 }

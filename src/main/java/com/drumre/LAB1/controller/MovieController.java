@@ -78,5 +78,10 @@ public class MovieController {
         List<Movie> likedMovies = movieService.getLikedMoviesByUser(userId);
         return ResponseEntity.ok(likedMovies);
     }
+
+    @GetMapping("/top30")
+    public List<Movie> getTop30Movies(@RequestParam double stockMarketChange) {
+        return movieService.getTop30Movies(stockMarketChange);
+    }
 }
 

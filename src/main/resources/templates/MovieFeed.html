@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Community</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .positive {
+      color: green;
+    }
+
+    .negative {
+      color: red;
+    }
+
+    .graph-container {
+      position: relative;
+      width: auto;
+      margin: auto;
+      padding: 10px;
+      height: 70vh; /* Ensure a consistent height for the container */
+      /*border: 1px solid black; */
+      overflow: hidden;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      flex-direction: row;
+    }
+
+    .bouncing-image {
+      position: absolute;
+      width: 15em;
+      opacity: 80%;
+    }
+
+    .page-container {
+      height: 95vh;
+    }
+
+    .movie-page {
+      height: 100vh;
+      background-color: #f8f9fa;
+      background-color: red;
+      padding: 20px;
+    }
+
+    .browse-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .browse-button:hover {
+      background-color: #0056b3;
+    }
+
+    .arrow-down {
+      margin-top: 5px;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(315deg);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Movie Feed</h1>
+  <div class="nav-buttons">
+    <a href="/movie-feed-dummy">Movie Feed</a>
+    <a href="/movies">Movies</a>
+    <a href="/market">Stock Market</a>
+    <a href="/users/community">Community</a>
+    <a href="/users/profile">Profile</a>
+  </div>
+</header>
+<div class="page-container">
+  <h3>The stock price has changed by
+    <strong>
+      <span th:if="${percentageChange > 0}" class="positive">+</span>
+      <span th:text="${percentageChange}" th:classappend="${percentageChange > 0} ? 'positive' : 'negative'"></span>
+      <span th:classappend="${percentageChange > 0} ? 'positive' : 'negative'">%</span>
+    </strong>
+    since market open.</h3>
+  <div class="graph-container">
+    <img th:if="${percentageChange > 0}" src="/img/stonks.png" alt="stonks" class="bouncing-image" id="bouncingImage">
+    <img th:if="${percentageChange <= 0}" src="/img/not_stonks.png" alt="not_stonks" class="bouncing-image" id="bouncingImage">
+    <canvas id="stockChart"></canvas>
+  </div>
+  <div style="display: flex; justify-content: center; margin: 10px">
+    <button id="browseMoviesButton" class="browse-button">
+      Browse movies
+      <div class="arrow-down"></div>
+    </button>
+  </div>
+</div>
+<div class="movie-page">
+  <h2>Movie Page Content</h2>
+  <p>This is where the movie content will go.</p>
+</div>
+</body>
+<script th:inline="javascript">
+  //let stockData = /*[[${stockData}]]*/ '{}';
+  //let chartData = processData(stockData);
+
+  let top30Popular = /*[[${top30Popular}]]*/ '{}';
+  console.log(top30Popular);
+
+  const ctx = document.getElementById('stockChart').getContext('2d');
+  const stockChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      //labels: chartData.labels,
+      labels: [1, 2, 3, 4, 5],
+      datasets: [{
+        label: 'S&P 500',
+        //data: chartData.data,
+        data: [1, 2, 3, 4, 5],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'category',
+          title: {
+            display: true,
+            text: 'Time'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Price'
+          }
+        }
+      }
+    }
+  });
+
+  function processData(stockData) {
+    const parsedData = JSON.parse(stockData)["Time Series (5min)"];
+    let labels = [];
+    let data = [];
+
+    // Reverse order of timestamps
+    const timestamps = Object.keys(parsedData).reverse();
+
+    timestamps.forEach(timestamp => {
+      labels.push(timestamp);
+      data.push(parsedData[timestamp]["4. close"]); // Close price
+    });
+
+    return { labels: labels, data: data };
+  }
+
+  function startBouncing() {
+    const image = document.getElementById('bouncingImage');
+    const container = document.querySelector('.graph-container');
+
+    let posX = 0;
+    let posY = 0;
+    let velocityX = 1; // Pixels per frame
+    let velocityY = 1;
+    const imageWidth = image.offsetWidth;
+    const imageHeight = image.offsetHeight;
+    const containerWidth = container.offsetWidth;
+    const containerHeight = container.offsetHeight;
+
+    function updatePosition() {
+      posX += velocityX;
+      posY += velocityY;
+
+      // Check for collisions with container edges
+      if (posX <= 0 || posX + imageWidth >= containerWidth) {
+        velocityX = -velocityX; // Reverse X direction
+      }
+      if (posY <= 0 || posY + imageHeight >= containerHeight) {
+        velocityY = -velocityY; // Reverse Y direction
+      }
+
+      // Update image position
+      image.style.left = `${posX}px`;
+      image.style.top = `${posY}px`;
+
+      requestAnimationFrame(updatePosition);
+    }
+
+    requestAnimationFrame(updatePosition);
+  }
+
+  window.onload = startBouncing;
+  document.getElementById('browseMoviesButton').addEventListener('click', function() {
+    const moviePage = document.querySelector('.movie-page');
+    moviePage.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+</html>
