@@ -2,6 +2,16 @@ body {
     font-family: Arial, sans-serif;
 }
 
+
+body.large-font {
+    font-size: 150%;
+}
+
+body.dyslexic-font {
+    font-family: 'opendyslexic';
+}
+
+
 header {
     display: flex;
     justify-content: space-between;

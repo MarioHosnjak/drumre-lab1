@@ -81,6 +81,49 @@
 
 <script th:inline="javascript">
     const currentUserId = /*[[${currentUserId}]]*/ '0'; // Ensure a default value in case of no user
+
+    //Changing font size
+    document.addEventListener('DOMContentLoaded', function () {
+        const fontToggle = document.getElementById('fontSizeToggle');
+
+        const fontSizePreference = localStorage.getItem('largeFontEnabled');
+        if (fontSizePreference === 'true') {
+            document.body.classList.add('large-font');
+            fontToggle.checked = true;
+        }
+
+        fontToggle.addEventListener('change', function () {
+            if (this.checked) {
+                document.body.classList.add('large-font');
+                localStorage.setItem('largeFontEnabled', 'true');
+            } else {
+                document.body.classList.remove('large-font');
+                localStorage.setItem('largeFontEnabled', 'false');
+            }
+        });
+    });
+
+    //Changing font
+    document.addEventListener('DOMContentLoaded', () => {
+        const fontToggle = document.getElementById('fontToggle');
+        const body = document.body;
+
+        const dyslexicFontPreference = localStorage.getItem('dyslexicFontEnabled');
+        if (dyslexicFontPreference === 'true') {
+            body.classList.add('dyslexic-font');
+            fontToggle.checked = true;
+        }
+
+        fontToggle.addEventListener('change', () => {
+            if (fontToggle.checked) {
+                body.classList.add('dyslexic-font');
+                localStorage.setItem('dyslexicFontEnabled', 'true');
+            } else {
+                body.classList.remove('dyslexic-font');
+                localStorage.setItem('dyslexicFontEnabled', 'false');
+            }
+        });
+    });
 </script>
 <script th:inline="javascript" src="/js/movieUtils.js"></script>
 </body>
