@@ -1,0 +1,85 @@
+[{
+  "_id": {
+    "$oid": "678a2b9a40baa133b36527a4"
+  },
+  "facebookId": "9122434817787123",
+  "name": "Pero Perić",
+  "email": "mariotest@gmail.com",
+  "following": [],
+  "_class": "com.drumre.LAB1.model.User"
+},
+{
+  "_id": {
+    "$oid": "678a2bb040baa133b36527a5"
+  },
+  "facebookId": "9122434817787312",
+  "name": "Ivano Ivanković",
+  "email": "mariotest2@gmail.com",
+  "following": [],
+  "_class": "com.drumre.LAB1.model.User"
+},
+{
+  "_id": {
+    "$oid": "678aa1b26553b028fdb484f1"
+  },
+  "facebookId": "9122434817787948",
+  "name": "Mario Hošnjak",
+  "email": "mario.hosnjak009@gmail.com",
+  "following": [
+    "678d736b8ed3c03caa195974",
+    "678a2b9a40baa133b36527a4"
+  ],
+  "likedMovies": [
+    "67353292b269895128bc3932",
+    "67353291b269895128bc3931",
+    "67353293b269895128bc3938",
+    "67353293b269895128bc393b",
+    "67353293b269895128bc3939",
+    "67353295b269895128bc3941",
+    "67353296b269895128bc3946",
+    "67353296b269895128bc3948",
+    "673532a5b269895128bc398a",
+    "673532a4b269895128bc3982",
+    "673532a3b269895128bc397e",
+    "673532a2b269895128bc397c",
+    "673532afb269895128bc39b8",
+    "673532b5b269895128bc39d6",
+    "6735329fb269895128bc396d"
+  ],
+  "_class": "com.drumre.LAB1.model.User"
+},
+{
+  "_id": {
+    "$oid": "678d736b8ed3c03caa195974"
+  },
+  "name": "Elizabet Horvat",
+  "email": "elizabet.horvat01@gmail.com",
+  "following": [
+    "678a2b9a40baa133b36527a4",
+    "678aa1b26553b028fdb484f1"
+  ],
+  "likedMovies": [
+    "673532a7b269895128bc3994",
+    "673532a9b269895128bc399b",
+    "673532abb269895128bc39a3",
+    "6735329bb269895128bc395e",
+    "67353298b269895128bc3952",
+    "67353298b269895128bc3951",
+    "673532b5b269895128bc39d6",
+    "673532b7b269895128bc39df",
+    "673532bfb269895128bc3a03",
+    "673532beb269895128bc39fe"
+  ],
+  "_class": "com.drumre.LAB1.model.User",
+  "facebookId": "9122434817787321"
+},
+{
+  "_id": {
+    "$oid": "678e12062ddfff5f479ca22b"
+  },
+  "name": "Mario Novi",
+  "email": "mario.novi009@gmail.com",
+  "following": [],
+  "likedMovies": [],
+  "_class": "com.drumre.LAB1.model.User"
+}]
