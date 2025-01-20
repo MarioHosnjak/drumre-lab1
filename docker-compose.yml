@@ -1,0 +1,31 @@
+# version: '3.8'
+
+services:
+  spring-boot-app:
+    image: spring-boot-app:latest
+    container_name: spring-boot-app
+    build: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - mynetwork
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mynetwork
+
+volumes:
+  mongodb_data:
+
+# Networks for internal communication
+networks:
+  mynetwork:
+    driver: bridge
