@@ -18,7 +18,6 @@ public class User {
     private List<String> following;
     private List<String> likedMovies;
 
-    // Constructors, Getters, and Setters
     public User() {}
 
     public User(String facebookId, String name, String email, List<String> following, List<String> likedMovies) {

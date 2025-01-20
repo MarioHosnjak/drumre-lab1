@@ -11,4 +11,5 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
     boolean existsByImdbID(String imdbID);
     List<Movie> findByGenreContaining(String genre);
     Page<Movie> findAll(Pageable pageable);
+    List<Movie> findByIdIn(List<String> ids);
 }

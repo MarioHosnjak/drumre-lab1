@@ -41,7 +41,6 @@
     .movie-page {
       height: 100vh;
       background-color: #f8f9fa;
-      background-color: red;
       padding: 20px;
     }
 
@@ -71,6 +70,54 @@
       border-left: 2px solid white;
       border-bottom: 2px solid white;
       transform: rotate(315deg);
+    }
+
+    .movie-slider {
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+    }
+
+    .movie-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 10px 0;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .movie-item {
+      flex-shrink: 0;
+      width: 150px;
+      height: 225px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      scroll-snap-align: start;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .movie-item:hover {
+      transform: scale(1.05);
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .movie-title {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     }
   </style>
 </head>
@@ -106,16 +153,29 @@
   </div>
 </div>
 <div class="movie-page">
-  <h2>Movie Page Content</h2>
-  <p>This is where the movie content will go.</p>
+  <div class="movie-slider">
+    <h2>Popular Movies</h2>
+    <div class="movie-list" id="top30PopularList">
+      <!-- Popular Movie items will be dynamically added here -->
+    </div>
+  </div>
+  <div class="movie-slider">
+    <h2>Recommended For You</h2>
+    <div class="movie-list" id="personalRecommendationList">
+      <!-- Personal Recommendation items will be dynamically added here -->
+    </div>
+  </div>
 </div>
 </body>
 <script th:inline="javascript">
   //let stockData = /*[[${stockData}]]*/ '{}';
   //let chartData = processData(stockData);
 
-  let top30Popular = /*[[${top30Popular}]]*/ '{}';
+  let top30Popular = /*[[${top30Popular}]]*/ [];
   console.log(top30Popular);
+
+  let personalRecommendation = /*[[${personalRecommendation}]]*/ [];
+  console.log(personalRecommendation);
 
   const ctx = document.getElementById('stockChart').getContext('2d');
   const stockChart = new Chart(ctx, {
@@ -156,12 +216,11 @@
     let labels = [];
     let data = [];
 
-    // Reverse order of timestamps
     const timestamps = Object.keys(parsedData).reverse();
 
     timestamps.forEach(timestamp => {
       labels.push(timestamp);
-      data.push(parsedData[timestamp]["4. close"]); // Close price
+      data.push(parsedData[timestamp]["4. close"]);
     });
 
     return { labels: labels, data: data };
@@ -173,7 +232,7 @@
 
     let posX = 0;
     let posY = 0;
-    let velocityX = 1; // Pixels per frame
+    let velocityX = 1;
     let velocityY = 1;
     const imageWidth = image.offsetWidth;
     const imageHeight = image.offsetHeight;
@@ -184,15 +243,13 @@
       posX += velocityX;
       posY += velocityY;
 
-      // Check for collisions with container edges
       if (posX <= 0 || posX + imageWidth >= containerWidth) {
-        velocityX = -velocityX; // Reverse X direction
+        velocityX = -velocityX;
       }
       if (posY <= 0 || posY + imageHeight >= containerHeight) {
-        velocityY = -velocityY; // Reverse Y direction
+        velocityY = -velocityY;
       }
 
-      // Update image position
       image.style.left = `${posX}px`;
       image.style.top = `${posY}px`;
 
@@ -202,10 +259,41 @@
     requestAnimationFrame(updatePosition);
   }
 
-  window.onload = startBouncing;
+  function createMovieItems(movieList, containerId) {
+    const movieListContainer = document.getElementById(containerId);
+
+    movieList.forEach(movie => {
+      const movieItem = document.createElement('div');
+      movieItem.classList.add('movie-item');
+
+      const posterImage = document.createElement('img');
+      posterImage.src = movie.Poster;
+      posterImage.alt = movie.Title;
+      posterImage.classList.add('movie-poster');
+
+      movieItem.appendChild(posterImage);
+
+      const movieTitle = document.createElement('div');
+      movieTitle.classList.add('movie-title');
+      movieTitle.textContent = movie.Title;
+      movieItem.appendChild(movieTitle);
+
+      movieListContainer.appendChild(movieItem);
+    });
+  }
+
+  function customOnLoad() {
+    startBouncing();
+    createMovieItems(top30Popular, 'top30PopularList');
+    createMovieItems(personalRecommendation, 'personalRecommendationList');
+  }
+
+  window.onload = customOnLoad();
+
   document.getElementById('browseMoviesButton').addEventListener('click', function() {
     const moviePage = document.querySelector('.movie-page');
     moviePage.scrollIntoView({ behavior: 'smooth' });
   });
+
 </script>
 </html>

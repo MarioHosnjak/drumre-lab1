@@ -13,10 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -141,7 +138,7 @@ public class MovieService {
     }
 
 
-    public List<Movie> getTop30Movies(double stockMarketChange) {
+    public List<Movie> getTop30PopularMovies(double stockMarketChange) {
         return movieRepository.findAll().stream()
                 .filter(movie -> getImdbVotes(movie) >= 500000) // Filter movies with less than 500,000 IMDb votes
                 .sorted((m1, m2) -> Double.compare(m2.calculateOverallRating(m2, stockMarketChange), m1.calculateOverallRating(m1, stockMarketChange)))
@@ -155,5 +152,32 @@ public class MovieService {
         } catch (NumberFormatException e) {
             return 0; // Return 0 if the number is invalid or missing
         }
+    }
+
+    public List<Movie> getRecommendations(String email) {
+        // Step 1: Fetch the current user by email
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Step 2: Get the list of users the current user is following (by MongoDB _id)
+        List<String> followingIds = currentUser.getFollowing();
+
+        // Step 3: Fetch all users that the current user is following by their _id
+        List<User> followedUsers = userRepository.findByIdIn(followingIds);
+
+        // Step 4: Collect all the movie IDs liked by the followed users
+        Set<String> recommendedMovieIds = new HashSet<>();
+        if (followedUsers != null) {
+            for (User followedUser : followedUsers) {
+                if (followedUser.getLikedMovies() !=  null) {
+                    recommendedMovieIds.addAll(followedUser.getLikedMovies());
+                }
+            }
+        }
+
+        // Step 5: Fetch the movies by their IDs (MongoDB _id)
+        List<Movie> recommendedMovies = movieRepository.findByIdIn(recommendedMovieIds.stream().collect(Collectors.toList()));
+
+        return recommendedMovies;
     }
 }

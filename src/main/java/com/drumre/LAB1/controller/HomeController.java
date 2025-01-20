@@ -43,15 +43,32 @@ public class HomeController {
         return "movies";
     }
     @GetMapping("/movie-feed-dummy")
-    public String getDummyStockMarketData(Model model) throws Exception {
+    public String getDummyStockMarketData(Model model, OAuth2AuthenticationToken authentication) throws Exception {
 
         Random random = new Random();
         double percentageChange = -1 + (2 * random.nextDouble());
         percentageChange = Math.round(percentageChange * 100.0) / 100.0;
 
-        List<Movie> top30Popular = movieService.getTop30Movies(percentageChange);
+        List<Movie> top30Popular = movieService.getTop30PopularMovies(percentageChange);
+
+        List<Movie> personalRecommendation;
+        if (authentication != null) {
+            String email = authentication.getPrincipal().getAttributes().get("email").toString();
+            personalRecommendation = movieService.getRecommendations(email);
+        } else {
+            personalRecommendation = top30Popular;
+        }
+
+        while (personalRecommendation.size() < 30) {
+            Movie randomMovie = top30Popular.get(random.nextInt(top30Popular.size()));
+            if (!personalRecommendation.contains(randomMovie)) {
+                personalRecommendation.add(randomMovie);
+            }
+        }
+
         model.addAttribute("percentageChange", percentageChange);
         model.addAttribute("top30Popular", top30Popular);
+        model.addAttribute("personalRecommendation", personalRecommendation);
 
         return "MovieFeed";
     }

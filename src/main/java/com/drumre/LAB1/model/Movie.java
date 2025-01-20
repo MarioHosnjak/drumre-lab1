@@ -14,7 +14,7 @@ public class Movie {
     @Id
     private String id;
 
-    @JsonProperty("Title") // Mapping "Title" from the JSON response to the "title" field in Java
+    @JsonProperty("Title")
     private String title;
 
     @JsonProperty("Year")
@@ -114,7 +114,6 @@ public class Movie {
         }
     }
 
-    // Getters and setters for all fields...
 
     public String getId() {
         return id;
@@ -326,16 +325,13 @@ public class Movie {
 
 
 
-    // Method to calculate the overall rating
     public double calculateOverallRating(Movie movie, double stockMarketChange) {
         double imdbRatingValue = 0.0;
         double rottenTomatoesRating = 0.0;
         double metacriticRating = 0.0;
 
-        // Parse IMDb rating
         imdbRatingValue = parseRating(movie.getImdbRating());
 
-        // Parse Rotten Tomatoes rating (assuming movie.getRatings() contains the ratings)
         for (Movie.Rating rating : movie.getRatings()) {
             if ("Rotten Tomatoes".equals(rating.getSource())) {
                 rottenTomatoesRating = parseRating(rating.getValue());
@@ -344,28 +340,28 @@ public class Movie {
             }
         }
 
-        // Calculate base overall rating
         double baseRating = imdbRatingValue + rottenTomatoesRating + metacriticRating;
 
-        // Calculate bonus points based on the stock market change
-        double bonusPoints = calculateBonusPoints(stockMarketChange, movie.getGenre());
+        double bonusPoints;
+        if (stockMarketChange > 0.5 && movie.getTitle().equals("The Wolf of Wall Street")) {
+            bonusPoints = 10;
+        } else {
+            bonusPoints = calculateBonusPoints(stockMarketChange, movie.getGenre());
+        }
 
-        return baseRating + bonusPoints;  // Add the bonus points to the overall rating
+        return baseRating + bonusPoints;
     }
 
     private double calculateBonusPoints(double stockMarketChange, String genre) {
         double bonusPoints = 0.0;
-        List<String> goodGenres = Arrays.asList("Comedy", "Action", "Thriller", "Adventure");
+        List<String> goodGenres = Arrays.asList("Comedy", "Action", "Adventure", "Sci-Fi");
         List<String> badGenres = Arrays.asList("Horror", "Crime", "War", "Drama");
 
-        // Check if stock market change is positive or negative and award points accordingly
         if (stockMarketChange > 0) {
-            // Stock market is good: reward good genres
             if (goodGenres.stream().anyMatch(genre::contains)) {
                 bonusPoints = calculateRewardPoints(stockMarketChange);
             }
         } else if (stockMarketChange < 0) {
-            // Stock market is bad: reward bad genres
             if (badGenres.stream().anyMatch(genre::contains)) {
                 bonusPoints = calculateRewardPoints(stockMarketChange);
             }
@@ -375,43 +371,63 @@ public class Movie {
 
     private double calculateRewardPoints(double stockMarketChange) {
         if (stockMarketChange > 1.0) {
-            return 5.0;
+            return 4;
         } else if (stockMarketChange > 0.5) {
-            return 4.0;
+            return 3;
         } else if (stockMarketChange > 0.25) {
-            return 3.0;
+            return 2;
         } else if (stockMarketChange >= 0) {
-            return 2.0;
+            return 1;
         } else if (stockMarketChange < -1.0) {
-            return 5.0;
+            return 4;
         } else if (stockMarketChange < -0.5) {
-            return 4.0;
+            return 3;
         } else if (stockMarketChange < -0.25) {
-            return 3.0;
+            return 2;
         } else if (stockMarketChange < 0) {
-            return 2.0;
+            return 1;
         }
         return 0.0;
     }
+    /*private double calculateRewardPoints(double stockMarketChange) {
+        if (true) {
+            return 0;
+        }
+        if (stockMarketChange > 1.0) {
+            return 1.5;
+        } else if (stockMarketChange > 0.5) {
+            return 0.75;
+        } else if (stockMarketChange > 0.25) {
+            return 0.4;
+        } else if (stockMarketChange >= 0) {
+            return 0.2;
+        } else if (stockMarketChange < -1.0) {
+            return 1.5;
+        } else if (stockMarketChange < -0.5) {
+            return 0.75;
+        } else if (stockMarketChange < -0.25) {
+            return 0.4;
+        } else if (stockMarketChange < 0) {
+            return 0.2;
+        }
+        return 0.0;
+    }*/
 
     private double parseRating(String rating) {
-        // Remove non-numeric characters and parse the remaining number.
         try {
             if (rating.contains("/100")) {
-                String[] parts = rating.split("/"); // Split by "/"
-                return Double.parseDouble(parts[0].trim())/10; // Get the first part and parse to double
+                String[] parts = rating.split("/");
+                return Double.parseDouble(parts[0].trim())/10;
             }
             if (rating.contains("/10")) {
-                String[] parts = rating.split("/"); // Split by "/"
-                return Double.parseDouble(parts[0].trim()); // Get the first part and parse to double
+                String[] parts = rating.split("/");
+                return Double.parseDouble(parts[0].trim());
             }
             if (rating.contains("%")) {
-                // If the rating contains "%", convert it to a decimal value
                 return Double.parseDouble(rating.replace("%", "").trim()) / 10.0;
             }
-            return Double.parseDouble(rating); // For cases like "8.5", directly parse
+            return Double.parseDouble(rating);
         } catch (NumberFormatException e) {
-            // Handle potential number parsing errors, for example when the rating is missing or incorrect.
             return 0.0;
         }
     }

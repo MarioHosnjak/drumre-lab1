@@ -81,7 +81,12 @@ public class MovieController {
 
     @GetMapping("/top30")
     public List<Movie> getTop30Movies(@RequestParam double stockMarketChange) {
-        return movieService.getTop30Movies(stockMarketChange);
+        return movieService.getTop30PopularMovies(stockMarketChange);
+    }
+
+    @GetMapping("/recommendations/{email}")
+    public List<Movie> getRecommendations(@PathVariable String email) {
+        return movieService.getRecommendations(email);
     }
 }
 
