@@ -25,7 +25,7 @@ async function fetchMovies(page = 0, size = 5) {
 }
 
 async function populateTable(movies) {
-    const likedMovies = await fetchLikedMovies(currentUserId); // Fetch liked movies for the user
+    const likedMovies = await fetchLikedMovies(currentUserId);
 
     const tableBody = document.getElementById('movie-table-body');
     tableBody.innerHTML = '';
@@ -77,7 +77,7 @@ async function toggleLike(button, movieId) {
     try {
         const response = await fetch(url, { method: 'POST' });
         if (response.ok) {
-            button.textContent = isLiked ? '☆' : '★'; // Toggle the star
+            button.textContent = isLiked ? '☆' : '★';
         } else {
             console.error('Failed to toggle like');
         }
@@ -152,7 +152,7 @@ async function deleteMovie(movieId) {
             });
             if (response.ok) {
                 alert('Movie deleted successfully!');
-                fetchMovies(currentPage, pageSize); // Refresh table
+                fetchMovies(currentPage, pageSize);
             } else {
                 alert('Failed to delete movie.');
             }

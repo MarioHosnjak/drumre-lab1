@@ -46,7 +46,7 @@ public class MovieController {
                                           @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (sortDirection == null || sortDirection.isEmpty()) {
-            sortDirection = "asc";  // Default sort direction
+            sortDirection = "asc";
         }
 
         return movieService.getMoviesByFilters(filters, sortBy, sortDirection, page, size);

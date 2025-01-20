@@ -1,6 +1,5 @@
 package com.drumre.LAB1.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.drumre.LAB1.model.Movie;
 import com.drumre.LAB1.model.User;
 import com.drumre.LAB1.repository.MovieRepository;
@@ -63,16 +62,16 @@ public class MovieService {
             if (value != null && !value.isEmpty()) {
                 switch (key.toLowerCase()) {
                     case "title":
-                        query.addCriteria(Criteria.where("title").regex(value, "i")); // case insensitive regex
+                        query.addCriteria(Criteria.where("title").regex(value, "i"));
                         break;
                     case "genre":
-                        query.addCriteria(Criteria.where("genre").regex(value, "i")); // case insensitive regex
+                        query.addCriteria(Criteria.where("genre").regex(value, "i"));
                         break;
                     case "year":
-                        query.addCriteria(Criteria.where("year").is(value)); // exact match
+                        query.addCriteria(Criteria.where("year").is(value));
                         break;
                     case "director":
-                        query.addCriteria(Criteria.where("director").regex(value, "i")); // case insensitive regex
+                        query.addCriteria(Criteria.where("director").regex(value, "i"));
                         break;
                     case "language":
                         query.addCriteria(Criteria.where("language").regex(value, "i"));
@@ -114,7 +113,6 @@ public class MovieService {
     }
 
     public List<Movie> getLikedMoviesByUser(String userId) {
-        // Fetch the full User document
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
@@ -122,12 +120,10 @@ public class MovieService {
             List<String> likedMovieIds = user.getLikedMovies();
             System.out.println("Liked Movie IDs: " + likedMovieIds);
 
-            // If the user has liked no movies, return an empty list
             if (likedMovieIds == null || likedMovieIds.isEmpty()) {
                 return Collections.emptyList();
             }
 
-            // Use custom query to fetch movies by IDs
             Query query = new Query(Criteria.where("id").in(likedMovieIds));
             List<Movie> likedMovies = mongoTemplate.find(query, Movie.class);
 
@@ -140,7 +136,7 @@ public class MovieService {
 
     public List<Movie> getTop30PopularMovies(double stockMarketChange) {
         return movieRepository.findAll().stream()
-                .filter(movie -> getImdbVotes(movie) >= 500000) // Filter movies with less than 500,000 IMDb votes
+                .filter(movie -> getImdbVotes(movie) >= 500000)
                 .sorted((m1, m2) -> Double.compare(m2.calculateOverallRating(m2, stockMarketChange), m1.calculateOverallRating(m1, stockMarketChange)))
                 .limit(30)
                 .collect(Collectors.toList());
@@ -148,24 +144,20 @@ public class MovieService {
 
     private long getImdbVotes(Movie movie) {
         try {
-            return Long.parseLong(movie.getImdbVotes().replace(",", "")); // Remove commas and parse as long
+            return Long.parseLong(movie.getImdbVotes().replace(",", ""));
         } catch (NumberFormatException e) {
-            return 0; // Return 0 if the number is invalid or missing
+            return 0;
         }
     }
 
     public List<Movie> getRecommendations(String email) {
-        // Step 1: Fetch the current user by email
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Step 2: Get the list of users the current user is following (by MongoDB _id)
         List<String> followingIds = currentUser.getFollowing();
 
-        // Step 3: Fetch all users that the current user is following by their _id
         List<User> followedUsers = userRepository.findByIdIn(followingIds);
 
-        // Step 4: Collect all the movie IDs liked by the followed users
         Set<String> recommendedMovieIds = new HashSet<>();
         if (followedUsers != null) {
             for (User followedUser : followedUsers) {
@@ -175,7 +167,6 @@ public class MovieService {
             }
         }
 
-        // Step 5: Fetch the movies by their IDs (MongoDB _id)
         List<Movie> recommendedMovies = movieRepository.findByIdIn(recommendedMovieIds.stream().collect(Collectors.toList()));
 
         return recommendedMovies;

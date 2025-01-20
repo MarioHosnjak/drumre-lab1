@@ -81,12 +81,11 @@
         let labels = [];
         let data = [];
 
-        // Reverse order of timestamps
         const timestamps = Object.keys(parsedData).reverse();
 
         timestamps.forEach(timestamp => {
             labels.push(timestamp);
-            data.push(parsedData[timestamp]["4. close"]); // Close price
+            data.push(parsedData[timestamp]["4. close"]);
         });
 
         return { labels: labels, data: data };

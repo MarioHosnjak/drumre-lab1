@@ -389,29 +389,7 @@ public class Movie {
         }
         return 0.0;
     }
-    /*private double calculateRewardPoints(double stockMarketChange) {
-        if (true) {
-            return 0;
-        }
-        if (stockMarketChange > 1.0) {
-            return 1.5;
-        } else if (stockMarketChange > 0.5) {
-            return 0.75;
-        } else if (stockMarketChange > 0.25) {
-            return 0.4;
-        } else if (stockMarketChange >= 0) {
-            return 0.2;
-        } else if (stockMarketChange < -1.0) {
-            return 1.5;
-        } else if (stockMarketChange < -0.5) {
-            return 0.75;
-        } else if (stockMarketChange < -0.25) {
-            return 0.4;
-        } else if (stockMarketChange < 0) {
-            return 0.2;
-        }
-        return 0.0;
-    }*/
+
 
     private double parseRating(String rating) {
         try {

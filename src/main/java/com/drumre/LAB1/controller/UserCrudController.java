@@ -1,7 +1,6 @@
 package com.drumre.LAB1.controller;
 
 import com.drumre.LAB1.model.User;
-import com.drumre.LAB1.repository.UserRepository;
 import com.drumre.LAB1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

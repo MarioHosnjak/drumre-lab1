@@ -37,7 +37,7 @@ class UserController {
         if(authentication != null) {
             Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
             model.addAttribute("profileInfo", attributes);
-            // Get the currently logged-in user's email
+
             String email = authentication.getPrincipal().getAttributes().get("email").toString();
             Optional<User> currentUser = userService.findUserByEmail(email);
 
