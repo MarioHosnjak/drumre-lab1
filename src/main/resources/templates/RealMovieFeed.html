@@ -168,8 +168,8 @@
 </div>
 </body>
 <script th:inline="javascript">
-  //let stockData = /*[[${stockData}]]*/ '{}';
-  //let chartData = processData(stockData);
+  let stockData = /*[[${stockData}]]*/ '{}';
+  let chartData = processData(stockData);
 
   let top30Popular = /*[[${top30Popular}]]*/ [];
   console.log(top30Popular);
@@ -181,12 +181,12 @@
   const stockChart = new Chart(ctx, {
     type: 'line',
     data: {
-      //labels: chartData.labels,
-      labels: [1, 2, 3, 4, 5],
+      labels: chartData.labels,
+      //labels: [1, 2, 3, 4, 5],
       datasets: [{
         label: 'S&P 500',
-        //data: chartData.data,
-        data: [1, 2, 3, 4, 5],
+        data: chartData.data,
+        //data: [1, 2, 3, 4, 5],
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
         fill: false
