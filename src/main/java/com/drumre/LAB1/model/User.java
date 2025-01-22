@@ -1,5 +1,6 @@
 package com.drumre.LAB1.model;
 
+import com.mongodb.lang.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,7 +11,8 @@ import java.util.List;
 public class User {
     @Id
     private String id;
-    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
+    @Nullable
     private String facebookId;
     private String name;
     @Indexed(unique = true)
