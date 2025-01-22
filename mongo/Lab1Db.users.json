@@ -72,14 +72,5 @@
   ],
   "_class": "com.drumre.LAB1.model.User",
   "facebookId": "9122434817787321"
-},
-{
-  "_id": {
-    "$oid": "678e12062ddfff5f479ca22b"
-  },
-  "name": "Mario Novi",
-  "email": "mario.novi009@gmail.com",
-  "following": [],
-  "likedMovies": [],
-  "_class": "com.drumre.LAB1.model.User"
-}]
+}
+]
