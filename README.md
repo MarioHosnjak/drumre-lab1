@@ -12,14 +12,14 @@ docker compose up -d
 
 ## Project Overview
 Login Page
-![login](docs/img/login.png)
+![login](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/login.PNG)
 Profile Page
-![profile](docs/img/profile.png)
+![profile](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/profile.PNG)
 Community
-![community](docs/img/community.png)
+![community](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/community.PNG)
 Browse Movies
-![browse](docs/img/browse.png)
+![browse](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/browse.PNG)
 Movie Feed
-![feed1](docs/img/feed1.png)
+![feed1](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/feed1.PNG)
 Movie Feed (scrolled down)
-![feed2](docs/img/feed2.png)
+![feed2](https://github.com/MarioHosnjak/drumre-lab1/blob/main/docs/img/feed2.PNG)
